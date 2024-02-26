@@ -10,6 +10,12 @@ __pycache__/
 reviews.csv
 train.csv
 dataset/
+.Sentimental-Analysis-using-Logistic-Regression/
+.vscode/
+real_reviews.csv
+review.csv
+
+
 
 # Distribution / packaging
 .Python

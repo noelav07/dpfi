@@ -3,3 +3,5 @@ pandas
 pickle4         
 setuptools      
 nltk
+scikit-learn
+
