@@ -15,7 +15,7 @@ dataset/
 real_reviews.csv
 review.csv
 Review Monitoring.ipynb
-
+sample.txt
 
 # Distribution / packaging
 .Python
