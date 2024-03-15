@@ -4,4 +4,4 @@ pickle4
 setuptools      
 nltk
 scikit-learn
-
+streamlit 
