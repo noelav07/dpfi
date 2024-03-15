@@ -1,53 +1,66 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
-input_csv_path = "/home/noel/Development/dpfi/dataset/review.csv"
-output_csv_path = "/home/noel/Development/dpfi/real_reviews.csv"
+# Function to load input and output CSVs
+def load_data(input_csv_path, output_csv_path):
+    input_data = pd.read_csv(input_csv_path, sep='\t')
+    output_data = pd.read_csv(output_csv_path, sep='\t')
+    return input_data, output_data
 
-# Load input and output CSVs
-input_data = pd.read_csv(input_csv_path, sep='\t')
-output_data = pd.read_csv(output_csv_path, sep='\t')
+# Function to display input CSV
+def display_input_data(input_data):
+    num_rows_input, num_cols_input = input_data.shape
+    st.subheader("Input Dataset")
+    st.write(input_data)
+    st.write(f"Number of rows: {num_rows_input}")
+    st.write(f"Number of columns: {num_cols_input}")
 
-# Ensure both DataFrames have the same columns
-common_columns = input_data.columns.intersection(output_data.columns)
-input_data = input_data[common_columns]
-output_data = output_data[common_columns]
+# Function to display output CSV
+def display_output_data(output_data):
+    num_rows_output, num_cols_output = output_data.shape
+    st.subheader("Output Dataset")
+    st.write(output_data)
+    st.write(f"Number of rows: {num_rows_output}")
+    st.write(f"Number of columns: {num_cols_output}")
 
-# Display input CSV
-st.subheader("Input Dataset")
-st.write(input_data)
-
-# Display number of rows and columns in input CSV
-num_rows_input, num_cols_input = input_data.shape
-st.write(f"Number of rows in input CSV: {num_rows_input}")
-st.write(f"Number of columns in input CSV: {num_cols_input}")
-
-# Display output CSV
-st.subheader("Output Data")
-st.write(output_data)
-
-# Display number of rows and columns in output CSV
-num_rows_output, num_cols_output = output_data.shape
-st.write(f"Number of rows in output CSV: {num_rows_output}")
-st.write(f"Number of columns in output CSV: {num_cols_output}")
-
-# Find differences between input and output CSV
-if input_data.shape == output_data.shape:
-    differences = (input_data != output_data).any(axis=None)
-    if differences:
-        st.write("Differences found between input and output CSV.")
+# Function to display rows present in input CSV but not in output CSV
+def display_missing_rows(input_data, output_data):
+    input_not_in_output = input_data[~input_data.isin(output_data)].dropna()
+    if not input_not_in_output.empty:
+        st.subheader("Rows Present in Input CSV But Not in Output CSV")
+        st.write(input_not_in_output)
     else:
-        st.write("No differences found between input and output CSV.")
-# else:
-#     st.write("Input and output CSVs have different shapes and cannot be compared directly.")
+        st.write("All rows from input CSV are present in output CSV.")
 
-# else:
-#     st.markdown("Differences found between input and output CSV.")
+# Function to display a graph or block diagram comparing input and output CSVs
+def display_comparison_graph(input_data, output_data):
+    fig, ax = plt.subplots()
+    ax.plot(["Input CSV", "Output CSV"], [input_data.shape[0], output_data.shape[0]], marker='o', linestyle='-')
+    ax.set_ylabel("Number of Rows")
+    ax.set_title("Comparison of Number of Rows Between Input and Output CSVs")
+    st.pyplot(fig)
 
+def main():
+    st.title("Deceptive Product Review Feedback")
 
-input_not_in_output = input_data[~input_data.isin(output_data)].dropna()
-if not input_not_in_output.empty:
-    st.subheader("Deceptive Review")
-    st.write(input_not_in_output)
-else:
-    st.write("All rows from input CSV are present in output CSV.")
+    # Specify file paths
+    input_csv_path = "/home/noel/Development/dpfi/dataset/review.csv"
+    output_csv_path = "/home/noel/Development/dpfi/real_reviews.csv"
+
+    # Load input and output CSVs
+    input_data, output_data = load_data(input_csv_path, output_csv_path)
+
+    # Create horizontal buttons for selecting dataset
+    cols = st.columns(4)
+    if cols[0].button("Input Dataset"):
+        display_input_data(input_data)
+    if cols[1].button("Output Dataset"):
+        display_output_data(output_data)
+    if cols[2].button("Missing Rows"):
+        display_missing_rows(input_data, output_data)
+    if cols[3].button("Comparison Graph"):
+        display_comparison_graph(input_data, output_data)
+
+if __name__ == "__main__":
+    main()
